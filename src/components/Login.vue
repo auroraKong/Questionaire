@@ -10,6 +10,7 @@
 
 <script>
 import store from '../store';
+import bus from '../bus';
 export default{
 	data () {
 		return {
@@ -36,6 +37,7 @@ export default{
 				}else{
 					this.warn = '';
 					store.save(data);
+					bus.$emit('showLogoutBtn');
 					this.$router.push({name: 'list'});
 				}
 			}, err => {

@@ -1,24 +1,55 @@
 <template>
   <div class="header">
-  	<button type="button" v-if="show" class="logout">登出</button>
+  	<router-link tag="div" class="logo" :to="{name: 'home'}"> 问卷管理</router-link>
+  	<router-link class="mylist" :to="{name: 'list'}">我的问卷</router-link>
+  	<button type="button" v-if="iflogged" class="btn logout" @click="logout">登出</button>
   </div>
 </template>
 
 <script>
+import store from '../store.js';
+import bus from '../bus.js';
+
 export default {
 	data () {
 		return {
-			show: false,
-
+			iflogged: false,
+			token: ''
 		}
 	},
+	created () {
+		this.token = store.fetch().token || '';
+		this.iflogged = this.token ? true : false;
+	},
+	mounted () {
+		bus.$on('showLogoutBtn', ()=>{
+			console.log('be trggiered!');
+			this.iflogged = !this.iflogged;
+		})
+	},
 	methods: {
-		
-	}
+		logout () {
+			store.save({
+				token: ''
+			})
+			this.iflogged = !this.iflogged;
+			this.$router.push({name: 'login'});
+		}
+	},
+	// watch: {
+	// 	token: {
+	// 		deep: true,
+	// 		handler (newToken) {
+	// 			console.log('TEST watch Token!');
+	// 			this.show = !this.show;
+	// 		}
+	// 	}
+	// }
 }
 </script>
 
 <style>
+@import '/static/style.css';
 .header{
 	position: fixed;
 	top: 0;
@@ -68,6 +99,7 @@ export default {
 	background-color: rgb(255, 140, 25);
 }
 .logout{
-	float: right;
+	position: absolute;
+	right: 10%;
 }
 </style>

@@ -15,15 +15,25 @@ router.post('/api/login/createAccount', (req, res)=>{
 		password: req.body.password
 	}
 	let newUser = new models.User(user);
-	newUser.save((err, data)=>{
-		if(err) res.send(err);
+	models.User.find({account: user.account}, (err, data) => {
+		if(err) res.send(data);
 		else {
-			var token = jwt.sign(user);
-			res.send({
-				token: token
-			});
+			if(data.length){
+				res.send('用户已存在');
+			}else{
+				newUser.save((err, data)=>{
+					if(err) res.send(err);
+					else {
+						var token = jwt.sign(user);
+						res.send({
+							token: token
+						});
+					}
+				})
+			}
 		}
 	})
+	
 })
 
 router.post('/api/login/getAccount', (req, res)=>{
@@ -34,7 +44,7 @@ router.post('/api/login/getAccount', (req, res)=>{
 	models.User.find({account: req.body.account}, (err, data)=>{
 		if(err) res.send(err);
 		else {
-			if(!data.length){//用户不存在
+			if(!data.length){
 				res.send('用户不存在');
 			}else if(data[0].password != req.body.password){
 				res.send('密码错误');
@@ -46,6 +56,29 @@ router.post('/api/login/getAccount', (req, res)=>{
 			}
 		}
 	})
+})
+
+router.post('/api/qsnr/createQuestionaire', (req, res) => {
+	console.log(req.body);
+	var token = req.body.token;
+	jwt.verify(token, function(err, data){
+		if(err) console.log(err);
+		else{
+			console.log('Verify: ', data.account);
+			let newQsnr = new models.Qsnr({
+				account: data.account,
+				qsnr: req.body.qsnr,
+				state: req.body.state
+			});
+			newQsnr.save((err, data)=>{
+				if(err) res.send(err);
+				else {
+					res.send('保存成功！');
+				}
+			})
+		}
+	})
+	
 })
 
 module.exports = router;

@@ -9,7 +9,9 @@
 	</form>
 </template>
 <script>
-import store from '../store.js'
+import store from '../store'
+import bus from '../bus'
+
 export default {
 	data () {
 		return {
@@ -33,9 +35,15 @@ export default {
 					password: this.password,
 				}
 				this.$http.post('/api/login/createAccount', user).then(response => {
-					// console.log(response);
-					store.save(response.body);
-					this.$router.push({name: 'list'});
+					let data = response.body;
+					if(typeof data === 'string'){
+						this.warn = data;
+					}else{
+						this.warn = '';
+						store.save(data);
+						bus.$emit('showLogoutBtn');
+						this.$router.push({name: 'list'});
+					}
 				}, err => {
 					console.log(err);
 				})

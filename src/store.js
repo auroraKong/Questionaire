@@ -13,5 +13,8 @@ export default {
 	},
 	save (store) {
 		window.sessionStorage.setItem(KEY, JSON.stringify(store))
+	},
+	del () {
+		window.sessionStorage.removeItem(KEY);
 	}
 }

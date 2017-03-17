@@ -26,10 +26,11 @@ export default {
 }
 body{
   overflow-y: scroll;
+  min-width: 700px;
   background-color: #ddd;
 }
 .container{
-  width: 80%;
+  width: 83%;
   margin: 6.5rem auto;
   padding: 2rem 0;
   border-radius: .2rem;

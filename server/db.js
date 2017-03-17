@@ -10,8 +10,15 @@ const userSchema = mongoose.Schema({
 	password: String
 });
 
+const qsnrSchema = mongoose.Schema({
+	account: String,
+	qsnr: Object,
+	state: String
+})
+
 const Models = {
-	User: mongoose.model('user', userSchema)
+	User: mongoose.model('user', userSchema),
+	Qsnr: mongoose.model('qsnr', qsnrSchema)
 }
 
 module.exports = Models;

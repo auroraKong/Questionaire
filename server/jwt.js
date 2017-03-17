@@ -15,10 +15,7 @@ module.exports = {
 	},
 	verify: function(token, callback){
 		jwt.verify(token, secret, function(err, decoded){
-			if(err) {
-				console.log(err);
-				callback(false);
-			}else callback(true);
+			callback(err, decoded);
 		})
 	}
 }
