@@ -27,7 +27,7 @@
 			</span>
 			<button class="btn" @click="draft">保存问卷</button>
 			<button class="btn" @click="publish">发布问卷</button>
-			<!-- <modal :ifShowModal="ifShowModal" @hideModal="hideModal" :hint="hint"></modal> -->
+			<modal :ifShowModal="ifShowModal" @hideModal="hideModal" :hint="modalhint"></modal>
 		</div>
 	</div>
 </template>
@@ -35,6 +35,7 @@
 import store from '../store'
 import Datec from './Date'
 import Question from './Question'
+import Modal from './Modal'
 
 // filter type
 function getTitle (type) {
@@ -54,19 +55,37 @@ function getTitle (type) {
 export default {
 	data () {
 		return {
+			path: '',
 			title: '',
 			showType: false,
 			form: [],
 			datec: '',
+			modalhint: '',
+			ifShowModal: false,
+			start: 0,
 		}
 	},
 	created () {
 		var cookie = store.fetch();
 		if(!cookie.token) this.$router.push({name: 'login'});
+
+		this.path = this.$route.path.replace(/\/qsnr\//, '');
+		if(this.path.indexOf('create') == -1){
+			let url = '/api/qsnr/getQsnr/' + this.path;
+			this.$http.get(url).then(response => {
+				let data = response.body;
+				this.title = data.qsnr.title;
+				this.form = data.qsnr.form;
+				this.datec = data.qsnr.end;
+			}, err => {
+				console.log(err);
+			})
+		}
 	},
 	components: {
 		Datec,
-		Question
+		Question,
+		Modal
 	},
 	methods: {
 		isShow () {
@@ -109,8 +128,19 @@ export default {
 			this.datec = date;
 		},
 		draft () {
+			this.setForm('draft');
+		},
+		publish () {
+			if(!this.title || !this.form.length || !this.datec){
+				this.modalhint = 'error';
+				this.ifShowModal = true;
+			}else{
+				this.modalhint = 'publish';
+				this.ifShowModal = true;
+			}
+		},
+		setForm (state) {
 			var data = {
-				token: store.fetch().token,
 				qsnr: {
 					title: this.title,
 					start: Date.now(),
@@ -118,16 +148,36 @@ export default {
 					form: this.form,
 					fillnum: 0,
 				},
-				state: 'draft'
+				state: state
 			};
-			this.$http.post('/api/qsnr/createQuestionaire', data).then(response => {
-				console.log(response);
-			}, err => {
-				console.log(err);
-			})
+			if(this.path.indexOf('create') == -1){
+				let url = '/api/qsnr/updateQsnr/' + this.path;
+				this.$http.post(url, data).then(response => {
+					this.modalhint = response.body;
+					this.ifShowModal = true;
+				}, err => {
+					console.log(err);
+				})
+			}else{
+				this.$http.post('/api/qsnr/createQsnr', data).then(response => {
+					this.modalhint = response.body;
+					this.ifShowModal = true;
+				}, err => {
+					console.log(err);
+				})
+			}
 		},
-		publish () {
-
+		hideModal (state) {
+			this.ifShowModal = false;
+			switch (state) {
+				case 'cancel':
+				case 'error':
+					break;
+				case 'publish':
+					this.setForm('publish');
+				default:
+					this.$router.push({name: 'list'});
+			}
 		}
 	}
 }

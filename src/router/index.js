@@ -16,6 +16,7 @@ export default new Router({
 		{path: '/reg', name: 'reg',　component: Reg},
 		{path: '/list',　name: 'list', component: List},
 		{path: '/create',　name: 'create', component: Create},
+		{path: '/qsnr/:id',　name: 'edit', component: Create},
 		{path: '/404', name: 'error', component: Error},
 		{path: '*', redirect: '/404'},
 	]

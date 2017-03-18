@@ -9,6 +9,7 @@ const secret = 'kad';
 
 var jwt = require('./jwt');
 
+// 创建用户账号
 router.post('/api/login/createAccount', (req, res)=>{
 	var user = {
 		account: req.body.account,
@@ -21,7 +22,7 @@ router.post('/api/login/createAccount', (req, res)=>{
 			if(data.length){
 				res.send('用户已存在');
 			}else{
-				newUser.save((err, data)=>{
+				newUser.save((err, ans)=>{
 					if(err) res.send(err);
 					else {
 						var token = jwt.sign(user);
@@ -35,7 +36,7 @@ router.post('/api/login/createAccount', (req, res)=>{
 	})
 	
 })
-
+// 获取用户账号
 router.post('/api/login/getAccount', (req, res)=>{
 	var user = {
 		account: req.body.account,
@@ -57,28 +58,104 @@ router.post('/api/login/getAccount', (req, res)=>{
 		}
 	})
 })
-
-router.post('/api/qsnr/createQuestionaire', (req, res) => {
-	console.log(req.body);
-	var token = req.body.token;
+// 新建问卷
+router.post('/api/qsnr/createQsnr', (req, res) => {
+	let token = req.headers['x-csrf-token'];
 	jwt.verify(token, function(err, data){
-		if(err) console.log(err);
+		if(err) res.send(err);
 		else{
-			console.log('Verify: ', data.account);
 			let newQsnr = new models.Qsnr({
 				account: data.account,
 				qsnr: req.body.qsnr,
 				state: req.body.state
 			});
-			newQsnr.save((err, data)=>{
+			newQsnr.save((err, ans)=>{
 				if(err) res.send(err);
 				else {
-					res.send('保存成功！');
+					res.send('success');
 				}
 			})
 		}
 	})
-	
+})
+// 获取当前登录用户所有问卷
+router.get('/api/qsnr/getQsnrLists', (req, res) => {
+	let token = req.headers['x-csrf-token'];
+	jwt.verify(token, function(err, data){
+		if(err) res.send(err);
+		else{
+			models.Qsnr.find({account: data.account}, (err, ans) => {
+				if(err) res.send(err);
+				else{
+					res.send(ans);
+				}
+			})
+		}
+	})
+})
+// 获取单个问卷
+router.get('/api/qsnr/getQsnr/:id', (req, res) => {
+	let token = req.headers['x-csrf-token'];
+	jwt.verify(token, function(err, data){
+		if(err) res.send(err);
+		else{
+			models.Qsnr.findById(mongoose.Types.ObjectId(req.params.id), (err, ans) => {
+				if(err) res.send(err);
+				else{
+					res.send(ans);
+				}
+			})
+		}
+	})
+})
+// 更新问卷
+router.post('/api/qsnr/updateQsnr/:id', (req, res) => {
+	let token = req.headers['x-csrf-token'];
+	jwt.verify(token, function(err, data){
+		if(err) res.send(err);
+		else {
+			let upQuery = {
+				qsnr: req.body.qsnr,
+				state: req.body.state
+			};
+			models.Qsnr.findByIdAndUpdate(mongoose.Types.ObjectId(req.params.id), {$set: upQuery}, (err, ans) => {
+				if(err) res.send(err);
+				else res.send('success');
+			})
+		}
+	})
+})
+// 删除问卷
+router.get('/api/qsnr/deleteQsnr/:id', (req, res) => {
+	let token = req.headers['x-csrf-token'];
+	jwt.verify(token, function(err, data){
+		if(err) res.send(err);
+		else {
+			models.Qsnr.remove({'_id': mongoose.Types.ObjectId(req.params.id)}, (err, ans) => {
+				if(err) res.send(err);
+				else res.send(ans);
+			})
+		}
+	})
+})
+// 广场展示，所有用户已发布的问卷
+router.get('/api/qsnr/square', (req, res) => {
+	let token = req.headers['x-csrf-token'];
+	jwt.verify(token, function(err, data){
+		if(err) res.send(err);
+		else{
+			let query = {
+				account: data.account,
+				state: 'publish'
+			};
+			models.Qsnr.find(query, (err, ans) => {
+				if(err) res.send(err);
+				else{
+					res.send(ans);
+				}
+			})
+		}
+	})
 })
 
 module.exports = router;

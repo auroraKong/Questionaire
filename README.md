@@ -68,6 +68,14 @@ created () {
 ```
 实际不应该是这样，应该给token一个过期时间，每次路由访问都向服务器发起一个GET请求，验证token是否有效。之后再完善。
 
-## 记得要优化的：密码加密，token验证
+## HTTP拦截器
+
+每次向后端请求数据需要携带token，原来是每次都把token直接塞到post请求的包体中发给后端，这里采用vue-resource提供的[Interceptors](https://github.com/pagekit/vue-resource/blob/master/docs/http.md)，在发起请求前将token添加到请求头部。
+
+## 删除功能
+
+table删除一行数据，无法及时渲染table，又不想再次向服务器请求数据，考虑用vuex实现一下这里。
+
+## 记得要优化的：密码加密，token过期验证
 ## Tips
 * autocomplete="off" 禁用输入字段自动完成功能
