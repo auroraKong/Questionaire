@@ -49,7 +49,6 @@ export default {
 </script>
 
 <style>
-@import '/static/style.css';
 .header{
 	position: fixed;
 	top: 0;

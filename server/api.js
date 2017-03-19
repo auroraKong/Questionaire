@@ -140,20 +140,10 @@ router.get('/api/qsnr/deleteQsnr/:id', (req, res) => {
 })
 // 广场展示，所有用户已发布的问卷
 router.get('/api/qsnr/square', (req, res) => {
-	let token = req.headers['x-csrf-token'];
-	jwt.verify(token, function(err, data){
+	models.Qsnr.find({state: 'publish'}, (err, ans) => {
 		if(err) res.send(err);
 		else{
-			let query = {
-				account: data.account,
-				state: 'publish'
-			};
-			models.Qsnr.find(query, (err, ans) => {
-				if(err) res.send(err);
-				else{
-					res.send(ans);
-				}
-			})
+			res.send(ans);
 		}
 	})
 })

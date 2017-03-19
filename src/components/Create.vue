@@ -67,8 +67,11 @@ export default {
 	},
 	created () {
 		var cookie = store.fetch();
-		if(!cookie.token) this.$router.push({name: 'login'});
-
+		if(!cookie.token) {
+			this.$router.push({name: 'login'});
+			return;
+		}
+		
 		this.path = this.$route.path.replace(/\/qsnr\//, '');
 		if(this.path.indexOf('create') == -1){
 			let url = '/api/qsnr/getQsnr/' + this.path;
@@ -183,7 +186,6 @@ export default {
 }
 </script>
 <style>
-@import '/static/style.css';
 /* 问卷标题 */
 .title{
 	width: 90%;

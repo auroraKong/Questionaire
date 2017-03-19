@@ -48,7 +48,10 @@ export default {
 	},
 	created () {
 		var cookie = store.fetch();
-		if(!cookie.token) this.$router.push({name: 'login'});
+		if(!cookie.token) {
+			this.$router.push({name: 'login'});
+			return;
+		}
 
 		this.$http.get('/api/qsnr/getQsnrLists').then(response => {
 			var data = response.body;
@@ -68,15 +71,16 @@ export default {
 			this.hint = 'delete';
 		},
 		hideModal (state) {
+			console.log(state);
 			if(state == 'delete'){
 				let url = '/api/qsnr/deleteQsnr/' + this.id;
 				this.$http.get(url).then(response => {
-					this.ifShowModal = false;
 					this.$router.push({name: 'list'});
 				}, err => {
 					console.log(err);
 				})
 			}
+			this.ifShowModal = false;
 		}
 	},
 	filters: {
@@ -100,35 +104,6 @@ export default {
 }
 </script>
 <style>
-.list{
-	margin: 0 auto;
-	width: 96%;
-	line-height: 1.5rem;
-	color: #555;
-	cursor: default;
-	-webkit-user-select: none;
-}
-.list thead tr{
-	font-size: 1.2rem;
-}
-.list thead tr th:nth-child(1){
-	width: 25%;
-}
-.list thead tr th:nth-child(2){
-	width: 20%;
-}
-.list thead tr th:nth-child(3){
-	width: 10%;
-}
-.list thead tr th:nth-child(4){
-	width: 45%;
-}
-.list tbody tr td{
-	border-bottom: 1px solid #ccc;
-	font-size: 1rem;
-	height: 3rem;
-	line-height: 3rem;
-}
 .create{
   cursor: pointer;
   display: inline-block;
