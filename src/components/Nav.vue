@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-  	<router-link tag="div" class="logo" :to="{name: 'home'}"> 问卷管理</router-link>
+  	<router-link tag="div" class="logo" :to="{name: 'home'}"> 问卷广场</router-link>
   	<router-link class="mylist" :to="{name: 'list'}">我的问卷</router-link>
   	<button type="button" v-if="iflogged" class="btn logout" @click="logout">登出</button>
   </div>

@@ -16,17 +16,16 @@
 				<tr v-for="(item, index) in formList">
 					<td>{{item.qsnr.title}}</td>
 					<td>{{item.qsnr.end}}</td>
-					<td v-bind:class="{publish: item.state == 'publish'}">{{item.state | stateContent}}</td>
+					<td :class="{publish: item.state == 'publish'}">{{item.state | stateContent}}</td>
 					<td>
 						<router-link tag="button" class="btn" :to="{name: 'edit', params: {id: item._id}}" v-if="item.state=='draft'">编辑问卷</router-link>
-						<!-- <router-link tag="button" class="btn" :to="{name: 'fill', params: {id: index}}" v-if="item.state=='publish'">填写问卷</router-link>
-						<router-link tag="button" class="btn" :to="{name: 'check', params: {id: index}}" v-if="item.state!='draft'">查看数据</router-link> -->
-						<button class="btn" v-on:click="delSurvey(item._id)">删除问卷</button>
+						<router-link tag="button" class="btn" :to="{name: 'check', params: {id: item._id}}" v-if="item.state!='draft'">查看数据</router-link>
+						<button class="btn" @click="delSurvey(item._id)">删除问卷</button>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<modal v-bind:ifShowModal="ifShowModal" v-on:hideModal="hideModal" v-bind:hint="hint"></modal>
+		<modal :ifShowModal="ifShowModal" @hideModal="hideModal" :hint="hint"></modal>
 	</div>
 	<router-link v-else :to="{name: 'create'}" class="create">&nbsp;新建问卷</router-link>
 </template>
@@ -71,11 +70,17 @@ export default {
 			this.hint = 'delete';
 		},
 		hideModal (state) {
-			console.log(state);
 			if(state == 'delete'){
 				let url = '/api/qsnr/deleteQsnr/' + this.id;
 				this.$http.get(url).then(response => {
-					this.$router.push({name: 'list'});
+					var idx = -1;
+					this.formList.forEach((item, index) => {
+						if(item._id === this.id) {
+							idx = index;
+							return;
+						}
+					})
+					this.formList.splice(idx, 1);
 				}, err => {
 					console.log(err);
 				})

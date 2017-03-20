@@ -1,12 +1,12 @@
 <template>
 	<div class="modal" v-if="ifShowModal">
-		<div class="mask" v-on:click="hide"></div>
+		<div class="mask" @click="hide"></div>
 		<div class="dialog">
 			<div class="headline">提示</div>
 			<div class="body">{{hint | hintContent}}</div>
 			<div class="footline">
-				<button v-on:click="confirm" class="btn">确定</button>
-				<button v-if="hint === 'publish' || hint === 'delete' || hint === 'fill'" v-on:click="cancel" class="btn">取消</button>
+				<button @click="confirm" class="btn">确定</button>
+				<button v-if="hint === 'publish' || hint === 'delete' || hint === 'fill'" @click="cancel" class="btn">取消</button>
 			</div>
 		</div>
 	</div>

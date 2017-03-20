@@ -15,8 +15,8 @@
 					<td>{{item.qsnr.end}}</td>
 					<td>{{item.account}}</td>
 					<td>
-						<!-- <router-link tag="button" class="btn" :to="{name: 'fill', params: {id: index}}" v-if="item.state=='publish'">填写问卷</router-link>
-						<router-link tag="button" class="btn" :to="{name: 'check', params: {id: index}}" v-if="item.state!='draft'">查看数据</router-link> -->
+						<router-link tag="button" class="btn" :to="{name: 'fill', params: {id: item._id}}" v-if="item.state=='publish'">填写问卷</router-link>
+						<!-- <router-link tag="button" class="btn" :to="{name: 'check', params: {id: index}}" v-if="item.state!='draft'">查看数据</router-link> -->
 					</td>
 				</tr>
 			</tbody>

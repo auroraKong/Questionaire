@@ -1,6 +1,6 @@
 <template>
 	<div class="date-wrap">
-		<input type="text" @focus="isShow = true" v-model="formatDate">
+		<input type="text" @focus="showDatec" v-model="datec[0]">
 		<div class="date" v-if="isShow">
 			<div class="year-month">
 				<span v-if="!isDisable" class="switch pre-month" @click="preMonth"></span>
@@ -23,7 +23,7 @@
 <script>
 export default {
 	props: {
-		datec: String // xxxx-xx-xx
+		datec: Array // [xxxx-xx-xx]
 	},
 	data () {
 		let today = new Date()
@@ -43,18 +43,11 @@ export default {
 			},
 			week: ['日','一','二','三','四','五','六'],
 			range: [],
-			formatDate: this.datec || '',
+			formatDate: this.datec[0],
 		}
 	},
 	created () {
-		if(this.datec){
-			this.formatDate = this.datec;
-			this.date.year = this.datec.slice(0, 4);
-			this.date.month = this.datec.slice(5, 7)-1;
-			this.date.day = this.datec.slice(8, 10);
-		}
 		this.getRange();
-		this.formatDate = this.format(this.date);
 	},
 	methods: {
 		getRange () {
@@ -73,6 +66,17 @@ export default {
 				}
 			}
 		},
+		showDatec () {
+			this.isShow = true;
+			this.formatDate = this.datec[0];
+			if(this.datec[0]){
+				this.date = {
+					year: this.datec[0].slice(0, 4),
+					month: this.datec[0].slice(5, 7)-1,
+					day: this.datec[0].slice(8, 10)
+				};
+			}
+		},
 		ifChosen (item) {
 			var obj = {
 				year: this.date.year,
@@ -86,7 +90,8 @@ export default {
 			this.date.day = day;
 			this.formatDate = this.format(this.date);
 			this.isShow = false;
-			this.$emit('getDate', this.formatDate);
+			this.datec[0] = this.formatDate;
+			this.$emit('getDate', this.datec);
 		},
 		preMonth () {
 			this.date.month--;
@@ -123,7 +128,7 @@ export default {
 			num = Number(num);
 			return num < 10 ? ('0' + num) : num;
 		}
-	},
+	}
 }
 </script>
 <style>

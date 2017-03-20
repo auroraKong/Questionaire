@@ -23,7 +23,7 @@
 		<div class="footer">
 			<span class="setDate">
 				<label for="date">问卷截止日期</label>
-				<datec @getDate="getDate" :datec="datec"></datec>
+				<datec :datec="datec"></datec>
 			</span>
 			<button class="btn" @click="draft">保存问卷</button>
 			<button class="btn" @click="publish">发布问卷</button>
@@ -59,7 +59,7 @@ export default {
 			title: '',
 			showType: false,
 			form: [],
-			datec: '',
+			datec: [],
 			modalhint: '',
 			ifShowModal: false,
 			start: 0,
@@ -79,7 +79,8 @@ export default {
 				let data = response.body;
 				this.title = data.qsnr.title;
 				this.form = data.qsnr.form;
-				this.datec = data.qsnr.end;
+				this.datec = [];
+				this.datec.push(data.qsnr.end);
 			}, err => {
 				console.log(err);
 			})
@@ -100,7 +101,7 @@ export default {
 					title: '',
 					type: type,
 					required: [],
-					content: '',
+					content: [],
 					num: 0,
 				})
 			}else if(type === 'radio'){
@@ -134,7 +135,7 @@ export default {
 			this.setForm('draft');
 		},
 		publish () {
-			if(!this.title || !this.form.length || !this.datec){
+			if(!this.title || !this.form.length || !this.datec.length){
 				this.modalhint = 'error';
 				this.ifShowModal = true;
 			}else{
@@ -147,7 +148,7 @@ export default {
 				qsnr: {
 					title: this.title,
 					start: Date.now(),
-					end: this.datec,
+					end: this.datec[0] || '',
 					form: this.form,
 					fillnum: 0,
 				},
